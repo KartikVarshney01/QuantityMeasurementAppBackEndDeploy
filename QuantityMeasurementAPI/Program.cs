@@ -30,8 +30,8 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title       = "Quantity Measurement API",
-        Version     = "v1",
+        Title = "Quantity Measurement API",
+        Version = "v1",
         Description =
             "UC18 REST API — register / login to receive a JWT token, then click " +
             "the Authorize 🔒 button and paste your token to access protected endpoints."
@@ -40,12 +40,12 @@ builder.Services.AddSwaggerGen(options =>
     // Bearer token input in Swagger UI
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name         = "Authorization",
-        Type         = SecuritySchemeType.Http,
-        Scheme       = "bearer",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
-        In           = ParameterLocation.Header,
-        Description  =
+        In = ParameterLocation.Header,
+        Description =
             "Paste your JWT token here (without the 'Bearer' prefix — Swagger adds it automatically)."
     });
 
@@ -118,30 +118,30 @@ builder.Services.AddScoped<HashingService>();
 // ── 6. UC18: JWT authentication middleware ────────────────────────────────────
 string jwtSecretKey = builder.Configuration["Jwt:SecretKey"]
     ?? throw new InvalidOperationException("Jwt:SecretKey is missing from configuration.");
-string jwtIssuer    = builder.Configuration["Jwt:Issuer"]
+string jwtIssuer = builder.Configuration["Jwt:Issuer"]
     ?? throw new InvalidOperationException("Jwt:Issuer is missing from configuration.");
-string jwtAudience  = builder.Configuration["Jwt:Audience"]
+string jwtAudience = builder.Configuration["Jwt:Audience"]
     ?? throw new InvalidOperationException("Jwt:Audience is missing from configuration.");
 
 builder.Services
     .AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer           = true,
-            ValidIssuer              = jwtIssuer,
-            ValidateAudience         = true,
-            ValidAudience            = jwtAudience,
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey         = new SymmetricSecurityKey(
+            IssuerSigningKey = new SymmetricSecurityKey(
                                            Encoding.UTF8.GetBytes(jwtSecretKey)),
-            ValidateLifetime         = true,
-            ClockSkew                = TimeSpan.Zero   // no grace period on expiry
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero   // no grace period on expiry
         };
 
         // Return a clean JSON 401 instead of ASP.NET Core's default HTML challenge
@@ -150,16 +150,16 @@ builder.Services
             OnChallenge = async context =>
             {
                 context.HandleResponse();
-                context.Response.StatusCode  = 401;
+                context.Response.StatusCode = 401;
                 context.Response.ContentType = "application/json";
 
                 var body = System.Text.Json.JsonSerializer.Serialize(new
                 {
-                    statusCode    = 401,
-                    message       = "You must be logged in. Register at POST /api/auth/register " +
+                    statusCode = 401,
+                    message = "You must be logged in. Register at POST /api/auth/register " +
                                     "or login at POST /api/auth/login.",
                     exceptionType = "UnauthorizedAccessException",
-                    timestamp     = DateTime.UtcNow
+                    timestamp = DateTime.UtcNow
                 });
 
                 await context.Response.WriteAsync(body);
@@ -195,15 +195,16 @@ if (!string.IsNullOrWhiteSpace(connectionString))
 }
 
 // ── 9. Swagger UI (Development only) ─────────────────────────────────────────
-if (app.Environment.IsDevelopment())
+// if (app.Environment.IsDevelopment())
+// {
+
+// }
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantity Measurement API v1");
-        c.RoutePrefix = "swagger";
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantity Measurement API v1");
+    c.RoutePrefix = "swagger";
+});
 
 // ── 10. Middleware pipeline ───────────────────────────────────────────────────
 // Order matters — Authentication must come before Authorization
