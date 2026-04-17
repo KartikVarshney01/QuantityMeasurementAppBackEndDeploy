@@ -12,7 +12,7 @@ using QuantityMeasurementAppRepoLayer.Data;
 namespace QuantityMeasurementRepoLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260417105121_InitialPostgres")]
+    [Migration("20260417114948_InitialPostgres")]
     partial class InitialPostgres
     {
         /// <inheritdoc />
