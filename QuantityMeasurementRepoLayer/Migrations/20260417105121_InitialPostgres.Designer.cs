@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using QuantityMeasurementAppRepoLayer.Data;
 
 #nullable disable
@@ -12,30 +12,30 @@ using QuantityMeasurementAppRepoLayer.Data;
 namespace QuantityMeasurementRepoLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260406065532_AddUsersAndUserId")]
-    partial class AddUsersAndUserId
+    [Migration("20260417105121_InitialPostgres")]
+    partial class InitialPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("QuantityMeasurementAppModelLayer.Entities.QuantityMeasurementEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("Id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("CreatedAt");
 
                     b.Property<string>("ErrorMessage")
@@ -44,7 +44,7 @@ namespace QuantityMeasurementRepoLayer.Migrations
                         .HasColumnName("ErrorMessage");
 
                     b.Property<bool>("HasError")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("HasError");
 
                     b.Property<string>("Operand1")
@@ -93,10 +93,10 @@ namespace QuantityMeasurementRepoLayer.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("Id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("CreatedAt");
 
                     b.Property<string>("Email")
@@ -106,7 +106,7 @@ namespace QuantityMeasurementRepoLayer.Migrations
                         .HasColumnName("Email");
 
                     b.Property<DateTime>("LastLoginAt")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("LastLoginAt");
 
                     b.Property<string>("Name")

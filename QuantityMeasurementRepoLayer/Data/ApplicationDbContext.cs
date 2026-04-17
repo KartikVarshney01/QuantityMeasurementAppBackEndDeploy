@@ -57,20 +57,17 @@ public class ApplicationDbContext : DbContext
 
         user.Property(u => u.Id)
             .ValueGeneratedOnAdd()
-            .HasColumnName("Id")
-            .HasColumnType("bigint");
+            .HasColumnName("Id");
 
         user.Property(u => u.Name)
             .IsRequired()
             .HasMaxLength(255)
-            .HasColumnName("Name")
-            .HasColumnType("nvarchar(255)");
+            .HasColumnName("Name");
 
         user.Property(u => u.Email)
             .IsRequired()
             .HasMaxLength(255)
-            .HasColumnName("Email")
-            .HasColumnType("nvarchar(255)");
+            .HasColumnName("Email");
 
         // Email must be unique — enforced at DB level
         user.HasIndex(u => u.Email)
@@ -81,17 +78,14 @@ public class ApplicationDbContext : DbContext
         user.Property(u => u.PasswordHash)
             .IsRequired()
             .HasMaxLength(100)
-            .HasColumnName("PasswordHash")
-            .HasColumnType("nvarchar(100)");
+            .HasColumnName("PasswordHash");
 
         user.Property(u => u.CreatedAt)
             .HasColumnName("CreatedAt")
-            .HasColumnType("datetime2")
             .IsRequired();
 
         user.Property(u => u.LastLoginAt)
             .HasColumnName("LastLoginAt")
-            .HasColumnType("datetime2")
             .IsRequired();
 
         // ════════════════════════════════════════════════════════════
@@ -104,14 +98,12 @@ public class ApplicationDbContext : DbContext
 
         entity.Property(e => e.Id)
               .ValueGeneratedOnAdd()
-              .HasColumnName("Id")
-              .HasColumnType("int");
+              .HasColumnName("Id");
 
         // ── UC18: UserId FK ───────────────────────────────────────────
         entity.Property(e => e.UserId)
               .IsRequired()
-              .HasColumnName("UserId")
-              .HasColumnType("bigint");
+              .HasColumnName("UserId");
 
         entity.HasIndex(e => e.UserId)
               .HasDatabaseName("IX_QuantityMeasurements_UserId");
@@ -120,8 +112,7 @@ public class ApplicationDbContext : DbContext
         entity.Property(e => e.Operation)
               .IsRequired()
               .HasMaxLength(50)
-              .HasColumnName("Operation")
-              .HasColumnType("nvarchar(50)");
+              .HasColumnName("Operation");
 
         // ── Operand1 → JSON ───────────────────────────────────────────
         var modelComparer = new ValueComparer<QuantityModel<object>?>(
@@ -133,7 +124,6 @@ public class ApplicationDbContext : DbContext
 
         entity.Property(e => e.Operand1)
               .HasColumnName("Operand1")
-              .HasColumnType("nvarchar(max)")
               .HasConversion(
                   v => v == null ? null : JsonSerializer.Serialize(v, jsonOpts),
                   v => v == null ? null : JsonSerializer.Deserialize<QuantityModel<object>>(v, jsonOpts))
@@ -142,7 +132,6 @@ public class ApplicationDbContext : DbContext
         // ── Operand2 → JSON ───────────────────────────────────────────
         entity.Property(e => e.Operand2)
               .HasColumnName("Operand2")
-              .HasColumnType("nvarchar(max)")
               .HasConversion(
                   v => v == null ? null : JsonSerializer.Serialize(v, jsonOpts),
                   v => v == null ? null : JsonSerializer.Deserialize<QuantityModel<object>>(v, jsonOpts))
@@ -156,7 +145,6 @@ public class ApplicationDbContext : DbContext
 
         entity.Property(e => e.Result)
               .HasColumnName("Result")
-              .HasColumnType("nvarchar(max)")
               .HasConversion(
                   v => v == null ? null : JsonSerializer.Serialize(v, jsonOpts),
                   v => v == null ? null : JsonSerializer.Deserialize<object>(v, jsonOpts))
@@ -165,20 +153,17 @@ public class ApplicationDbContext : DbContext
         // ── HasError ──────────────────────────────────────────────────
         entity.Property(e => e.HasError)
               .HasColumnName("HasError")
-              .HasColumnType("bit")
               .IsRequired();
 
         // ── ErrorMessage ──────────────────────────────────────────────
         entity.Property(e => e.ErrorMessage)
               .HasColumnName("ErrorMessage")
-              .HasColumnType("nvarchar(500)")
               .HasMaxLength(500)
               .IsRequired(false);
 
         // ── CreatedAt ─────────────────────────────────────────────────
         entity.Property(e => e.CreatedAt)
               .HasColumnName("CreatedAt")
-              .HasColumnType("datetime2")
               .IsRequired();
 
         // ── Indexes ───────────────────────────────────────────────────

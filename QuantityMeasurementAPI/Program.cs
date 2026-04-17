@@ -78,15 +78,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(
-            connectionString,
-            sqlOpts => {
-                sqlOpts.MigrationsAssembly("QuantityMeasurementRepoLayer");
-                sqlOpts.EnableRetryOnFailure(
-                    maxRetryCount:     3,
-                    maxRetryDelay:     TimeSpan.FromSeconds(5),
-                    errorNumbersToAdd: null);
-            }));
+        options.UseNpgsql(
+        connectionString,
+        sqlOpts =>
+        {
+            sqlOpts.MigrationsAssembly("QuantityMeasurementRepoLayer");
+            sqlOpts.EnableRetryOnFailure(); // ✅ FIXED
+        }));
 
     Console.WriteLine("[Program] SQL Server connection string found — using EF Core repositories.");
 
