@@ -22,7 +22,7 @@ public class UserEntity
     /// <summary>Display name provided at registration.</summary>
     [Required]
     [MaxLength(255)]
-    [Column("Name", TypeName = "nvarchar(255)")]
+    [Column("Name")]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
@@ -31,7 +31,7 @@ public class UserEntity
     /// </summary>
     [Required]
     [MaxLength(255)]
-    [Column("Email", TypeName = "nvarchar(255)")]
+    [Column("Email")]
     public string Email { get; set; } = string.Empty;
 
     /// <summary>
@@ -40,7 +40,7 @@ public class UserEntity
     /// </summary>
     [Required]
     [MaxLength(100)]
-    [Column("PasswordHash", TypeName = "nvarchar(100)")]
+    [Column("PasswordHash")]
     public string PasswordHash { get; set; } = string.Empty;
 
     // ── Audit ─────────────────────────────────────────────────────────

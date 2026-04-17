@@ -46,7 +46,7 @@ public class QuantityMeasurementEntity
     /// </summary>
     [Required]
     [MaxLength(50)]
-    [Column("Operation", TypeName = "nvarchar(50)")]
+    [Column("Operation")]
     public string Operation { get; set; } = string.Empty;
 
     // ── Operands (JSON columns) ───────────────────────────────────────
@@ -55,13 +55,13 @@ public class QuantityMeasurementEntity
     /// First operand serialised as JSON.
     /// Mapped by EF Core value converter in <c>ApplicationDbContext</c>.
     /// </summary>
-    [Column("Operand1", TypeName = "nvarchar(max)")]
+    [Column("Operand1")]
     public QuantityModel<object>? Operand1 { get; set; }
 
     /// <summary>
     /// Second operand serialised as JSON. Null for unary operations (Convert).
     /// </summary>
-    [Column("Operand2", TypeName = "nvarchar(max)")]
+    [Column("Operand2")]
     public QuantityModel<object>? Operand2 { get; set; }
 
     // ── Result (JSON column) ──────────────────────────────────────────
@@ -70,7 +70,7 @@ public class QuantityMeasurementEntity
     /// Result value serialised as JSON. May be a boolean (Compare),
     /// a scalar double (Divide), or a QuantityDTO string (Convert / Add / Subtract).
     /// </summary>
-    [Column("Result", TypeName = "nvarchar(max)")]
+    [Column("Result")]
     public object? Result { get; set; }
 
     // ── Error tracking ────────────────────────────────────────────────
@@ -81,7 +81,7 @@ public class QuantityMeasurementEntity
 
     /// <summary>Exception message when <see cref="HasError"/> is true; otherwise null.</summary>
     [MaxLength(500)]
-    [Column("ErrorMessage", TypeName = "nvarchar(500)")]
+    [Column("ErrorMessage")]
     public string? ErrorMessage { get; set; }
 
     // ── Audit ─────────────────────────────────────────────────────────

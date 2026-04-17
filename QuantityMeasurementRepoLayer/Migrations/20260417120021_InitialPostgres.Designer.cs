@@ -12,7 +12,7 @@ using QuantityMeasurementAppRepoLayer.Data;
 namespace QuantityMeasurementRepoLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260417114948_InitialPostgres")]
+    [Migration("20260417120021_InitialPostgres")]
     partial class InitialPostgres
     {
         /// <inheritdoc />
@@ -40,7 +40,7 @@ namespace QuantityMeasurementRepoLayer.Migrations
 
                     b.Property<string>("ErrorMessage")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("character varying(500)")
                         .HasColumnName("ErrorMessage");
 
                     b.Property<bool>("HasError")
@@ -48,21 +48,21 @@ namespace QuantityMeasurementRepoLayer.Migrations
                         .HasColumnName("HasError");
 
                     b.Property<string>("Operand1")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("Operand1");
 
                     b.Property<string>("Operand2")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("Operand2");
 
                     b.Property<string>("Operation")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("Operation");
 
                     b.Property<string>("Result")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("Result");
 
                     b.Property<long>("UserId")
@@ -102,7 +102,7 @@ namespace QuantityMeasurementRepoLayer.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("Email");
 
                     b.Property<DateTime>("LastLoginAt")
@@ -112,13 +112,13 @@ namespace QuantityMeasurementRepoLayer.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("Name");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("PasswordHash");
 
                     b.HasKey("Id");
