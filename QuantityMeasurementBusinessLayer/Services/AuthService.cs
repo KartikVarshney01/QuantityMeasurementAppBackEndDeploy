@@ -17,12 +17,12 @@ namespace QuantityMeasurementAppBusinessLayer.Services;
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
-    private readonly JwtService      _jwtService;
+    private readonly JwtService _jwtService;
 
     public AuthService(IUserRepository userRepository, JwtService jwtService)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _jwtService     = jwtService     ?? throw new ArgumentNullException(nameof(jwtService));
+        _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
     }
 
     // ── Register ──────────────────────────────────────────────────────
@@ -33,6 +33,18 @@ public class AuthService : IAuthService
     /// </summary>
     public AuthResponse Register(RegisterRequest request)
     {
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ArgumentException("Email cannot be null");
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+            throw new ArgumentException("Password cannot be null");
+
+        if (string.IsNullOrWhiteSpace(request.Name))
+            throw new ArgumentException("Name cannot be null");
+
         // Reject duplicate email before doing any hashing work
         UserEntity? existing = _userRepository.FindByEmail(request.Email);
         if (existing != null)
@@ -44,11 +56,11 @@ public class AuthService : IAuthService
 
         var newUser = new UserEntity
         {
-            Name         = request.Name,
-            Email        = request.Email,
+            Name = request.Name,
+            Email = request.Email,
             PasswordHash = passwordHash,
-            CreatedAt    = DateTime.UtcNow,
-            LastLoginAt  = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            LastLoginAt = DateTime.UtcNow
         };
 
         _userRepository.Save(newUser);
@@ -89,12 +101,12 @@ public class AuthService : IAuthService
     private AuthResponse BuildResponse(UserEntity user, string token) =>
         new AuthResponse
         {
-            Token     = token,
+            Token = token,
             TokenType = "Bearer",
             ExpiresIn = _jwtService.GetExpirySeconds(),
-            UserId    = user.Id,
-            Email     = user.Email,
-            Name      = user.Name,
-            IssuedAt  = DateTime.UtcNow.ToString("o")
+            UserId = user.Id,
+            Email = user.Email,
+            Name = user.Name,
+            IssuedAt = DateTime.UtcNow.ToString("o")
         };
 }

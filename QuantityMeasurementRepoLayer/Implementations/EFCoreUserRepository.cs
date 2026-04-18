@@ -23,8 +23,17 @@ public class EFCoreUserRepository : IUserRepository
     /// Looks up a user by email (case-sensitive, uses the unique DB index).
     /// Returns null when no match is found.
     /// </summary>
+    // public UserEntity? FindByEmail(string email)
+    //     => _context.Users.FirstOrDefault(u => u.Email == email);
+
     public UserEntity? FindByEmail(string email)
-        => _context.Users.FirstOrDefault(u => u.Email == email);
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return null;
+
+        return _context.Users
+            .FirstOrDefault(u => u.Email != null && u.Email.ToLower() == email.ToLower());
+    }
 
     // ── FindById ──────────────────────────────────────────────────────
 

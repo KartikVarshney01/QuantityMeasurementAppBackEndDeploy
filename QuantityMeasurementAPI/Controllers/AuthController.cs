@@ -15,13 +15,13 @@ namespace QuantityMeasurementAPI.Controllers;
 [Produces("application/json")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService              _authService;
-    private readonly ILogger<AuthController>   _logger;
+    private readonly IAuthService _authService;
+    private readonly ILogger<AuthController> _logger;
 
     public AuthController(IAuthService authService, ILogger<AuthController> logger)
     {
         _authService = authService ?? throw new ArgumentNullException(nameof(authService));
-        _logger      = logger      ?? throw new ArgumentNullException(nameof(logger));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     // ── POST /api/auth/register ───────────────────────────────────────
@@ -51,9 +51,29 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
+    // public IActionResult Register([FromBody] RegisterRequest request)
+    // {
+    //     _logger.LogInformation("Register called — email: {Email}", request.Email);
+    //     AuthResponse response = _authService.Register(request);
+    //     return Ok(response);
+    // }
     public IActionResult Register([FromBody] RegisterRequest request)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (request == null)
+            return BadRequest("Request body is missing.");
+
+        if (string.IsNullOrWhiteSpace(request.Email) ||
+            string.IsNullOrWhiteSpace(request.Password) ||
+            string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest("Name, Email and Password are required.");
+        }
+
         _logger.LogInformation("Register called — email: {Email}", request.Email);
+
         AuthResponse response = _authService.Register(request);
         return Ok(response);
     }
@@ -104,9 +124,9 @@ public class AuthController : ControllerBase
         _logger.LogInformation("Auth ping called.");
         return Ok(new
         {
-            message   = "Auth controller is running.",
-            register  = "POST /api/auth/register",
-            login     = "POST /api/auth/login",
+            message = "Auth controller is running.",
+            register = "POST /api/auth/register",
+            login = "POST /api/auth/login",
             timestamp = DateTime.UtcNow
         });
     }
