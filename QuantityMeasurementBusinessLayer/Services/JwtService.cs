@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Binder; 
 using Microsoft.IdentityModel.Tokens;
 using QuantityMeasurementAppModelLayer.Entities;
 
@@ -67,12 +66,11 @@ public class JwtService
 
     public string GenerateToken(UserEntity user)
     {
-        var secretKey = _configuration.GetValue<string>("Jwt:SecretKey");
-        var issuer = _configuration.GetValue<string>("Jwt:Issuer");
-        var audience = _configuration.GetValue<string>("Jwt:Audience");
-        var expiryStr = _configuration.GetValue<string>("Jwt:ExpiryMinutes");
+        var secretKey = _configuration["Jwt:SecretKey"];
+        var issuer = _configuration["Jwt:Issuer"];
+        var audience = _configuration["Jwt:Audience"];
+        var expiryStr = _configuration["Jwt:ExpiryMinutes"];
 
-        // ✅ SAFETY CHECK (CRITICAL)
         if (string.IsNullOrEmpty(secretKey))
             throw new Exception("JWT SecretKey is missing!");
 
