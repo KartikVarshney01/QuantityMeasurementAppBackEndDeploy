@@ -32,38 +32,81 @@ public class JwtService
     /// Builds and signs a JWT token for the given user.
     /// Claims included: sub (userId), email, jti (unique token ID), name, userId.
     /// </summary>
+    // public string GenerateToken(UserEntity user)
+    // {
+    //     string secretKey      = _configuration["Jwt:SecretKey"]!;
+    //     string issuer         = _configuration["Jwt:Issuer"]!;
+    //     string audience       = _configuration["Jwt:Audience"]!;
+    //     int    expiryMinutes  = int.Parse(_configuration["Jwt:ExpiryMinutes"]!);
+
+    //     // Build the signing key from the secret string
+    //     var signingKey  = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+    //     var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+
+    //     // Claims embedded in the token payload
+    //     // userId claim is read by the controller to scope history queries
+    //     var claims = new List<Claim>
+    //     {
+    //         new(JwtRegisteredClaimNames.Sub,   user.Id.ToString()),
+    //         new(JwtRegisteredClaimNames.Email, user.Email),
+    //         new(JwtRegisteredClaimNames.Jti,   Guid.NewGuid().ToString()),
+    //         new("name",   user.Name),
+    //         new("userId", user.Id.ToString())
+    //     };
+
+    //     var token = new JwtSecurityToken(
+    //         issuer:             issuer,
+    //         audience:           audience,
+    //         claims:             claims,
+    //         expires:            DateTime.UtcNow.AddMinutes(expiryMinutes),
+    //         signingCredentials: credentials);
+
+    //     return new JwtSecurityTokenHandler().WriteToken(token);
+    // }
+
     public string GenerateToken(UserEntity user)
     {
-        string secretKey      = _configuration["Jwt:SecretKey"]!;
-        string issuer         = _configuration["Jwt:Issuer"]!;
-        string audience       = _configuration["Jwt:Audience"]!;
-        int    expiryMinutes  = int.Parse(_configuration["Jwt:ExpiryMinutes"]!);
+        var secretKey = _configuration.GetValue<string>("Jwt:SecretKey");
+        var issuer = _configuration.GetValue<string>("Jwt:Issuer");
+        var audience = _configuration.GetValue<string>("Jwt:Audience");
+        var expiryStr = _configuration.GetValue<string>("Jwt:ExpiryMinutes");
 
-        // Build the signing key from the secret string
-        var signingKey  = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        // ✅ SAFETY CHECK (CRITICAL)
+        if (string.IsNullOrEmpty(secretKey))
+            throw new Exception("JWT SecretKey is missing!");
+
+        if (string.IsNullOrEmpty(issuer))
+            throw new Exception("JWT Issuer is missing!");
+
+        if (string.IsNullOrEmpty(audience))
+            throw new Exception("JWT Audience is missing!");
+
+        if (string.IsNullOrEmpty(expiryStr))
+            throw new Exception("JWT ExpiryMinutes is missing!");
+
+        int expiryMinutes = int.Parse(expiryStr);
+
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-        // Claims embedded in the token payload
-        // userId claim is read by the controller to scope history queries
         var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub,   user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email),
-            new(JwtRegisteredClaimNames.Jti,   Guid.NewGuid().ToString()),
-            new("name",   user.Name),
-            new("userId", user.Id.ToString())
-        };
+    {
+        new(JwtRegisteredClaimNames.Sub,   user.Id.ToString()),
+        new(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+        new(JwtRegisteredClaimNames.Jti,   Guid.NewGuid().ToString()),
+        new("name",   user.Name ?? ""),
+        new("userId", user.Id.ToString())
+    };
 
         var token = new JwtSecurityToken(
-            issuer:             issuer,
-            audience:           audience,
-            claims:             claims,
-            expires:            DateTime.UtcNow.AddMinutes(expiryMinutes),
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
     // ── Helpers ───────────────────────────────────────────────────────
 
     /// <summary>Returns the configured token lifetime converted to seconds.</summary>
